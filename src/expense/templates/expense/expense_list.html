@@ -6,7 +6,7 @@
   <table>
     <thead>
       <tr>
-        <th>Category</th>
+        <th>Name</th>
         <th>Amount</th>
         <th>Description</th>
         <th>Date</th>
@@ -16,7 +16,7 @@
     <tbody>
       {% for expense in expenses %}
         <tr>
-          <td>{{ expense.category }}</td>
+          <td>{{ expense.name }}</td>
           <td>{{ expense.amount }}</td>
           <td>{{ expense.description }}</td>
           <td>{{ expense.date }}</td>
