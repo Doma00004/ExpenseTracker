@@ -10,7 +10,7 @@ urlpatterns = [
     path('deletecategory/<int:category_id>', views.delete_category, name='deletecategory'),
 
     # expense 
-    path('', views.expense_list, name='expense_list'),
+    path('showexpense/', views.expense_list, name='expense_list'),
     path('addexpense/', views.add_expense, name='add_expense'),
     path('updateexpense/<int:expense_id>', views.update_expense, name='updateexpense'),
     path('deleteexpense/<int:expense_id>', views.delete_expense, name='deleteexpense'),

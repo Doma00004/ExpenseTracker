@@ -3,16 +3,19 @@ from django.contrib.auth.decorators import login_required
 from .models import Expense, Category
 from .forms import *
 from django.contrib import messages
+from django.db.models import Sum
+from collections import defaultdict
+from datetime import datetime
 
 # category section start
-# @login_required
+@login_required
 def category_list(request):
     categories = Category.objects.all()
     return render(request, 'expense/category_list.html', {
         'categories': categories
     })
 
-# @login_required
+@login_required
 def add_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
@@ -32,7 +35,7 @@ def add_category(request):
         'form': CategoryForm
     })
 
-# @login_required
+@login_required
 def update_category(request, category_id):
     instance = Category.objects.get(id=category_id)
     if request.method == 'POST':
@@ -54,7 +57,7 @@ def update_category(request, category_id):
 
     return render(request, 'expense/update_category.html', context)
 
-# @login_required
+@login_required
 def delete_category(request, category_id):
     category = Category.objects.get(id = category_id)
     category.delete()
@@ -62,18 +65,43 @@ def delete_category(request, category_id):
     return redirect('category_list')
 # category section end
 
-
 # expense section start
-# @login_required
+@login_required
+# def expense_list(request):
+#     expenses = Expense.objects.filter(user=request.user)
+#     expenses = Expense.objects.all()
+
+#     return render(request, 'expense/expense_list.html', {
+#         'expenses': expenses
+#     })
+
+
+
+@login_required
 def expense_list(request):
-    # expenses = Expense.objects.filter(user=request.user)
-    expenses = Expense.objects.all()
+    expenses = Expense.objects.filter(user=request.user).order_by('-date')
+    
+    # Group by date
+    grouped_expenses = defaultdict(list)
+    for expense in expenses:
+        grouped_expenses[expense.date].append(expense)
+
+    # Calculate totals
+    expenses_with_totals = [
+        {
+            "date": date,
+            "expenses": grouped_expenses[date],
+            "total": sum(exp.amount for exp in grouped_expenses[date])
+        }
+        for date in sorted(grouped_expenses.keys(), reverse=True)
+    ]
 
     return render(request, 'expense/expense_list.html', {
-        'expenses': expenses
+        'expenses_with_totals': expenses_with_totals
     })
 
-# @login_required
+
+@login_required
 def add_expense(request):
     if request.method == 'POST':
         form = ExpenseForm(request.POST)
@@ -93,7 +121,7 @@ def add_expense(request):
         'form': ExpenseForm
     })
 
-# @login_required
+@login_required
 def update_expense(request, expense_id):
     instance = Expense.objects.get(id=expense_id)
     if request.method == 'POST':
@@ -113,7 +141,7 @@ def update_expense(request, expense_id):
 
     return render(request, 'expense/update_expense.html', context)
 
-# @login_required
+@login_required
 def delete_expense(request, expense_id):
     expense = Expense.objects.get(id = expense_id)
     expense.delete()
@@ -135,14 +163,14 @@ def delete_expense(request, expense_id):
 #         'rem_amount':amount
 #     })
 
-# @login_required
+@login_required
 def budget_list(request):
     budgets = Budget.objects.all()
     return render(request, 'expense/budget_list.html', {
         'budgets': budgets
     })
 
-# @login_required
+@login_required
 def add_budget(request):
     if request.method == 'POST':
         form = BudgetForm(request.POST)
@@ -162,7 +190,7 @@ def add_budget(request):
         'form': BudgetForm
     })
 
-# @login_required
+@login_required
 def update_budget(request, budget_id):
     instance = Budget.objects.get(id=budget_id)
     if request.method == 'POST':
@@ -181,10 +209,9 @@ def update_budget(request, budget_id):
     context = {
         'form':BudgetForm(instance=instance)
     }
-
     return render(request, 'expense/update_budget.html', context)
 
-# @login_required
+@login_required
 def delete_budget(request, budget_id):
     budget = Budget.objects.get(id = budget_id)
     budget.delete()
