@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+{% block title %}Budgets{% endblock %}
+
+{% block content %}
+<div style="display: flex;">
+    <!-- Left: Categories -->
+    <div style="flex: 1; margin-right: 20px;">
+        <h3>Categories</h3>
+        <ul style="list-style: none; padding: 0;">
+            {% for category in categories %}
+            <li style="margin-bottom: 10px;">
+                <a href="?category={{ category }}" 
+                   class="btn btn-secondary {% if selected_category == category %}btn-active{% endif %}">
+                    {{ category }}
+                </a>
+            </li>
+            
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Right: Details -->
+    <div style="flex: 2;">
+        <h3>{{ selected_category }}</h3>
+        <p><strong>Weekly Budget:</strong> {{ weekly_budget|floatformat:2 }}</p>
+        <p><strong>Total Weekly Expenses:</strong> {{ total_expenses|floatformat:2 }}</p>
+        <p><strong>Remaining Budget:</strong> {{ remaining_budget|floatformat:2 }}</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in weekly_expenses %}
+                <tr>
+                    <td>{{ expense.name }}</td>
+                    <td>{{ expense.description }}</td>
+                    <td>{{ expense.amount }}</td>
+                    <td>{{ expense.date|date:"M. d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

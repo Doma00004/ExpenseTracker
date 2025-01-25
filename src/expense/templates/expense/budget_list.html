@@ -2,7 +2,8 @@
 {% block title %}My Budgets{% endblock %}
 
 {% block content %}
-  <h2>Budgets</h2>
+<div class="list-container">
+<h2 style="text-align: center;">Budgets</h2><br>
   <table>
     <thead>
       <tr>
@@ -22,11 +23,11 @@
           <td>{{ budget.time_period }}</td>
           <td>{{ budget.amount }}</td>
           <td>
-            <a href="/updatebudget/{{budget.id}}" class="btn btn-primary">
+            <a href="/expense/updatebudget/{{budget.id}}" class="btn btn-primary">
                 <i class="fas fa-pen-square"></i>
             </a>
             &nbsp;&nbsp;
-            <a href="/deletebudget/{{budget.id}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this budget?')">
+            <a href="/expense/deletebudget/{{budget.id}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this budget?')">
                 <i class="fas fa-trash-alt"></i>
             </a>
         </td>
@@ -35,4 +36,5 @@
     </tbody>
   </table>
   <a href="{% url 'add_budget' %}" class="btn btn-primary">Add Budget</a>
+  </div>
 {% endblock %}

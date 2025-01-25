@@ -1,0 +1,51 @@
+ /* General Table Styling */
+    table {
+        width: 50%;
+        border-spacing: 0 10px; /* Add spacing between rows */
+    }
+
+    table td {
+        /* text-align: left; */
+        padding: 10px 20px; /* Add padding for readability */
+        border: none;
+        /* vertical-align: middle; */
+    }
+
+    /* Align text to the right for numeric values */
+    .table-text-right {
+        text-align: right;
+    }
+
+    /* Improved Button Styling */
+    .btn-primary {
+        background-color: #4CAF50; /* Green for edit */
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #45a049; /* Lighter green on hover */
+    }
+
+    .btn-danger {
+        background-color: #f44336; /* Red for delete */
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-danger:hover {
+        background-color: #e31c0e; /* Darker red on hover */
+    }
+
+    /* Adjust table content alignment */
+    .expenses-container {
+        padding: 20px; /* Add container padding */
+    }

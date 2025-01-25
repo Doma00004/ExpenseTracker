@@ -2,8 +2,8 @@
 {% block title %}My Expenses{% endblock %}
 
 {% block content %}
-<div class="expenses-container">
-    <h2>Expenses</h2>
+<div class="list-container">
+    <h2 style="text-align: center;">Expenses</h2><br>
 
     {% for group in expenses_with_totals %}
         <h3>{{ group.date|date:"M. d, Y" }}</h3>
@@ -15,11 +15,11 @@
                     <td>({{ expense.description }})</td>
                     <td class="table-text-right">{{ expense.amount }}</td>
                     <td>
-                        <a href="/updateexpense/{{ expense.id }}" class="btn btn-primary">
+                        <a href="/expense/updateexpense/{{ expense.id }}" class="btn btn-primary">
                             Edit
                         </a>
                         &nbsp;
-                        <a href="/deleteexpense/{{ expense.id }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this expense?')">
+                        <a href="/expense/deleteexpense/{{ expense.id }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this expense?')">
                             Delete
                         </a>
                     </td>

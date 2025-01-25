@@ -65,6 +65,7 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'expense_list' %}">Expense</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'category_list' %}">Category</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'budget_list' %}">Budget</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'report' %}">Report</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                 {% else %}                   
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
@@ -74,50 +75,89 @@
     </div>
 </nav>
 
-<!-- Hero Section -->
-<section class="hero">
-    <h1>Welcome to Expense Tracker</h1>
-    <p>Take control of your finances, one step at a time.</p>
-    <a href="{% url 'register' %}" class="cta-button">Get Started</a>
-</section>
+{% if user.is_authenticated %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to Expense Tracker</h1>
+        <p>Take control of your finances, one step at a time.</p>
+        <a href="{% url 'report' %}" class="cta-button">View Report</a>
+    </section>
 
-<!-- Features Section -->
-<section class="features container text-center my-5">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <img src="{% static 'images/1.jpeg' %}" height="200px" alt="Track Expenses" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">Track Expenses</h5>
-                    <p class="card-text">Monitor your spending and stay within budget.</p>
+    <!-- Features Section -->
+    <section class="features container text-center my-5">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'images/1.jpeg' %}" height="200px" alt="Track Expenses" class="card-img-top">
+                    <div class="card-body">
+                        <a href="{% url 'add_expense' %}" class="card-title"><h5>Record Expenses</h5></a>
+                        <p class="card-text">Monitor your spending and stay within budget.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'images/3.jpeg' %}" height="200px" alt="Set Budgets" class="card-img-top">
+                    <div class="card-body">
+                        <a href="{% url 'add_budget' %}" class="card-title"><h5>Set Budgets</h5></a>
+                        <p class="card-text">Plan ahead and allocate your resources wisely.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'images/5.jpeg' %}" height="200px" alt="Categorize Expenses" class="card-img-top">
+                    <div class="card-body">
+                        <a href="{% url 'add_category' %}" class="card-title"><h5>Categorize Expenses</h5></a>
+                        <p class="card-text">Organize your expenses into meaningful categories.</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <img src="{% static 'images/3.jpeg' %}" height="200px" alt="Set Budgets" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">Set Budgets</h5>
-                    <p class="card-text">Plan ahead and allocate your resources wisely.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <img src="{% static 'images/5.jpeg' %}" height="200px" alt="Categorize Expenses" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">Categorize Expenses</h5>
-                    <p class="card-text">Organize your expenses into meaningful categories.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
-<!-- Call-to-Action Section -->
-<section class="text-center my-5">
-    <a href="#" class="cta-button">Add Expense</a>
-</section>
+{% else %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to Expense Tracker</h1>
+        <p>Take control of your finances, one step at a time.</p>
+        <a href="{% url 'register' %}" class="cta-button">Get Started</a>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features container text-center my-5">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'images/1.jpeg' %}" height="200px" alt="Track Expenses" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Track Expenses</h5>
+                        <p class="card-text">Monitor your spending and stay within budget.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'images/3.jpeg' %}" height="200px" alt="Set Budgets" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Set Budgets</h5>
+                        <p class="card-text">Plan ahead and allocate your resources wisely.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'images/5.jpeg' %}" height="200px" alt="Categorize Expenses" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Categorize Expenses</h5>
+                        <p class="card-text">Organize your expenses into meaningful categories.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
 
 <!-- Footer -->
 <footer>

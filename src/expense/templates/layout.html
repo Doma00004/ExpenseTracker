@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -19,14 +20,16 @@
 
 <style>
     footer {
-            text-align: center;
-            padding: 10px 20px;
-            background-color: #343a40;
-            color: white;
-        }
-    /* General Table Styling */
+        text-align: center;
+        padding: 10px 20px;
+        background-color: #343a40;
+        color: white;
+    }
+
+
+        /* General Table Styling */
     table {
-        width: 50%;
+        width: 80%;
         border-spacing: 0 10px; /* Add spacing between rows */
     }
 
@@ -72,11 +75,12 @@
     }
 
     /* Adjust table content alignment */
-    .expenses-container {
-        padding: 20px; /* Add container padding */
+    .list-container {
+        padding: 20px 80px; /* Add container padding */
     }
 
 </style>
+{% endblock %}
 </head>
 <body>
     <header>
@@ -92,6 +96,7 @@
                             <li class="nav-item"><a class="nav-link" href="{% url 'expense_list' %}">Expense</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'category_list' %}">Category</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'budget_list' %}">Budget</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'report' %}">Report</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                         {% else %}                   
                             <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
@@ -107,6 +112,19 @@
         <!-- Content will be injected here from child templates -->
         {% endblock %}
     </main>
+
+    <!-- <script>
+        document.querySelectorAll('.btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const category = this.getAttribute('data-category');
+        fetch(`/expenses?category=${category}`)
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('.expense-list').innerHTML = html;
+            });
+    });
+});
+    </script> -->
 
     <footer>
         <p>&copy; 2024 Expense Tracker</p>
