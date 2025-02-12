@@ -21,7 +21,4 @@ urlpatterns = [
     path('updatebudget/<int:budget_id>', views.update_budget, name='updatebudget'),
     path('deletebudget/<int:budget_id>', views.delete_budget, name='deletebudget'),
     path('report/', views.report, name='report'),
-    path('homes', views.budget_view, name='homes'),
-
-
 ]

@@ -95,7 +95,7 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'djangoecommerce',
+#         'NAME': 'expense_tracker',
 #         'USER':'root',
 #         'PASSWORD':'',
 #         'HOST':'localhost',
