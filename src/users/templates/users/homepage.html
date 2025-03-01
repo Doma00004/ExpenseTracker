@@ -63,7 +63,6 @@
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'expense_list' %}">Expense</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'category_list' %}">Category</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'budget_list' %}">Budget</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'report' %}">Report</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
@@ -108,8 +107,8 @@
                 <div class="card">
                     <img src="{% static 'images/5.jpeg' %}" height="200px" alt="Categorize Expenses" class="card-img-top">
                     <div class="card-body">
-                        <a href="{% url 'add_category' %}" class="card-title"><h5>Categorize Expenses</h5></a>
-                        <p class="card-text">Organize your expenses into meaningful categories.</p>
+                        <a href="{% url 'report' %}" class="card-title"><h5>Generate Report</h5></a>
+                        <p class="card-text">Generate monthly report of your financial expenses.</p>
                     </div>
                 </div>
             </div>
@@ -149,8 +148,8 @@
                 <div class="card">
                     <img src="{% static 'images/5.jpeg' %}" height="200px" alt="Categorize Expenses" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="card-title">Categorize Expenses</h5>
-                        <p class="card-text">Organize your expenses into meaningful categories.</p>
+                        <h5 class="card-title">Generate Report</h5>
+                        <p class="card-text">Generate monthly report of your financial expenses.</p>
                     </div>
                 </div>
             </div>

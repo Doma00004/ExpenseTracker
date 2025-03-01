@@ -124,6 +124,9 @@
         <input type="password" id="password" name="password" class="form-control" placeholder="Enter Password"><br>
         
         <button type="submit" class="btn">Sign in</button>
+        <br><br>
+        <a href="{% url 'forgot_password' %}">Forgot Password?</a>  <!-- Add Forgot Password Link -->
+        <br>
         <a href="{% url 'register' %}">Create new account</a>
     </form>
 </div>

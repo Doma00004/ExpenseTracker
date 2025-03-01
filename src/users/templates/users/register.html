@@ -27,24 +27,36 @@
     }
 
     .registerform-container .form-label {
-        display: block;
-        color: #0a6f26; /* Slightly lighter green */
+        /* display: block;
+        color: #0a6f26; 
+        font-weight: bold;
+        margin-bottom: 5px; */
+        /* text-align: center; */
+        color: #0a6f26;
         font-weight: bold;
         margin-bottom: 5px;
-        /* text-align: center; */
     }
 
     .registerform-container .form-control {
-        width: 100%;
-        background-color: #eafbee; /* Light green background */
-        border: 1px solid #98d9b6; /* Green border */
+        /* width: 100%;
+        background-color: #eafbee; 
+        border: 1px solid #98d9b6; 
         border-radius: 10px;
         height: 45px;
         padding: 0 25px;
         font-size: 16px;
-        color: #0a6f26; /* Text in darker green */
+        color: #0a6f26; 
         margin-bottom: 5px;
-        /* text-align: center; */
+        transition: all 0.3s ease; */
+        width: 100%;
+        background-color: #eafbee;
+        border: 1px solid #98d9b6;
+        border-radius: 10px;
+        height: 45px;
+        padding: 0 15px;
+        font-size: 16px;
+        color: #0a6f26;
+        margin-bottom: 25px;
         transition: all 0.3s ease;
     }
 
@@ -86,6 +98,21 @@
         text-decoration: underline;
         color: #065b18; /* Even darker green for hover */
     }
+
+    /* .form-text {
+        padding: 0px 0px 5px 0px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .form-label {
+        padding: 10px 0px 5px 0px;
+    }
+
+    .textinput form-control{
+        padding: 10px 0px 5px 0px;
+
+    } */
 
     .alert {
         padding: 10px;
@@ -130,12 +157,15 @@
         {{ form | crispy }}
         <!-- <label for="username" class="form-label">Username</label><br><br>
         <input type="text" id="username" name="username" class="form-control" placeholder="Enter Username"><br>
+
+        <label for="email" class="form-label">Email</label><br><br>
+        <input type="email" id="email" name="email" class="form-control" placeholder="Enter Email"><br>
         
-        <label for="password" class="form-label">Password</label><br><br>
-        <input type="password" id="password" name="password" class="form-control" placeholder="Enter Password"><br>
+        <label for="password1" class="form-label">Password</label><br><br>
+        <input type="password" id="password1" name="password1" class="form-control" placeholder="Enter Password"><br>
         
-        <label for="confirmpassword" class="form-label">Confirm Password</label><br><br>
-        <input type="password" id="confirmpassword" name="confirmpassword" class="form-control" placeholder="Confirm Password"><br>
+        <label for="password2" class="form-label">Confirm Password</label><br><br>
+        <input type="password" id="password2" name="password2" class="form-control" placeholder="Confirm Password"><br>
          -->
         <!-- Register Button -->
         <button type="submit" class="btn">Register</button>

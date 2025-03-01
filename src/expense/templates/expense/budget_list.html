@@ -7,10 +7,9 @@
   <table>
     <thead>
       <tr>
-        <th>Category</th>       
-        <th>Time Period</th>
+        <th>Category</th>      
         <th>Amount</th>
-        <th>Action</th>
+        <!-- <th>Action</th> -->
       </tr>
     </thead>
     <tbody>
@@ -20,8 +19,7 @@
       {% for budget in budgets %}
         <tr>
           <td>{{ budget.category }}</td>
-          <td>{{ budget.time_period }}</td>
-          <td>{{ budget.amount }}</td>
+          <td>Rs. {{ budget.amount }}</td>
           <td>
             <a href="/expense/updatebudget/{{budget.id}}" class="btn btn-primary">
                 <i class="fas fa-pen-square"></i>

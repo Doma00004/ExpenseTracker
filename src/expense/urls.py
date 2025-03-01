@@ -4,10 +4,10 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # category
-    path('showcategory', views.category_list, name='category_list'),
-    path('addcategory/', views.add_category, name='add_category'),
-    path('updatecategory/<int:category_id>', views.update_category, name='updatecategory'),
-    path('deletecategory/<int:category_id>', views.delete_category, name='deletecategory'),
+    # path('showcategory', views.category_list, name='category_list'),
+    # path('addcategory/', views.add_category, name='add_category'),
+    # path('updatecategory/<int:category_id>', views.update_category, name='updatecategory'),
+    # path('deletecategory/<int:category_id>', views.delete_category, name='deletecategory'),
 
     # expense 
     path('showexpense/', views.expense_list, name='expense_list'),
