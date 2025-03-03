@@ -4,6 +4,8 @@
 {% block content %}
 <div class="list-container">
 <h2 style="text-align: center;">Budgets</h2><br>
+<a href="{% url 'add_budget' %}" class="btn btn-primary" style="float: right; margin-bottom: 10px;">Add Budget</a>
+
   <table>
     <thead>
       <tr>
@@ -33,6 +35,5 @@
       {% endfor %}
     </tbody>
   </table>
-  <a href="{% url 'add_budget' %}" class="btn btn-primary">Add Budget</a>
   </div>
 {% endblock %}

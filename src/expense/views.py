@@ -103,9 +103,42 @@ def add_expense(request):
         if form.is_valid():
             expense = form.save(commit=False)
             expense.user = request.user
+            category = expense.category
+            amount = expense.amount
+
+            # Check if a budget is allocated for this category
+            budget = Budget.objects.filter(user=request.user, category=category).first()
+            
+            if not budget:
+                messages.error(request, 'No budget is allocated for this category.')
+                return render(request, 'expense/add_expense.html', {'form': form})
+            
+            # Get current year and month
+            current_year = now().year
+            current_month = now().month
+
+            # Calculate total expenses for this category in the current month
+            total_expenses = Expense.objects.filter(
+                user=request.user,
+                category=category,
+                date__year=current_year,
+                date__month=current_month
+            ).aggregate(total=Sum('amount'))['total'] or 0
+            remaining_budget = budget.amount - total_expenses
+
+            print(f"Budget Amount: {budget.amount}")  # Debugging line
+            print(f"Total Expenses: {total_expenses}")  # Debugging line
+            print(f"Remaining Budget: {remaining_budget}")
+
+            if amount > remaining_budget:
+                messages.error(request, f'Expense exceeds budget. Available Budget: Rs. {remaining_budget}')
+                return render(request, 'expense/add_expense.html', {'form': form})
+
+            # Save expense if all conditions are met
+
             expense.save()
             messages.add_message(request, messages.SUCCESS, "Expense added successfully !")
-            return redirect('expense_list')
+            return redirect('add_expense')
         else:
             messages.add_message(request, messages.ERROR, 'Please verify form')
             form = ExpenseForm()
@@ -124,7 +157,7 @@ def update_expense(request, expense_id):
         if form.is_valid():
             form.save()
             messages.add_message(request,messages.SUCCESS, 'Expense updated')
-            return redirect('expense_list')
+            return redirect('add_expense')
         else:
             messages.add_message(request, messages.ERROR, 'Please verify form')
             return render(request, 'expense/update_expense.html', {
@@ -147,10 +180,9 @@ def delete_expense(request, expense_id):
 
 
 # budget section start
-
 @login_required
 def budget_list(request):
-    budgets = Budget.objects.all()
+    budgets = Budget.objects.filter(user=request.user)
     return render(request, 'expense/budget_list.html', {
         'budgets': budgets
     })
@@ -160,20 +192,33 @@ def add_budget(request):
     if request.method == 'POST':
         form = BudgetForm(request.POST)
         if form.is_valid():
-            budget = form.save(commit=False)
-            budget.user = request.user
-            budget.save()
-            messages.add_message(request, messages.SUCCESS, "Budget added successfully !")
-            return redirect('budget_list')
+            category = form.cleaned_data['category']
+            amount = form.cleaned_data['amount']
+            
+            # Check if a budget already exists for this user and category
+            budget = Budget.objects.filter(user=request.user, category=category).first()
+
+            if budget:
+                # If budget exists, update the amount
+                budget.amount += amount
+                budget.save()
+                messages.success(request, f'Budget updated! New budget for {category}: Rs. {budget.amount:.2f}')
+            else:
+                # If no budget exists, create a new one
+                new_budget = form.save(commit=False)
+                new_budget.user = request.user
+                new_budget.save()
+                messages.success(request, "Budget added successfully!")
+
+            return redirect('add_budget')
+
         else:
-            messages.add_message(request, messages.ERROR, 'Please verify form')
-            form = BudgetForm()
-            return render(request, 'expense/add_budget.html', {
-                'form': form
-            })
-    return render(request, 'expense/add_budget.html', {
-        'form': BudgetForm
-    })
+            messages.error(request, 'Please verify the form.')
+
+    else:
+        form = BudgetForm()
+
+    return render(request, 'expense/add_budget.html', {'form': form})
 
 @login_required
 def update_budget(request, budget_id):
@@ -185,7 +230,7 @@ def update_budget(request, budget_id):
             budget.user = request.user
             budget.save()
             messages.add_message(request,messages.SUCCESS, 'Budget updated')
-            return redirect('budget_list')
+            return redirect('add_budget')
         else:
             messages.add_message(request, messages.ERROR, 'Please verify form')
             return render(request, 'expense/update_budget.html', {

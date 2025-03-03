@@ -4,6 +4,8 @@
 {% block content %}
 <div class="list-container">
     <h2 style="text-align: center;">Expenses</h2><br>
+    <a href="{% url 'add_expense' %}" class="btn btn-primary" style="float: right; margin-bottom: 10px;">Add Expense</a>
+
 
     {% for group in expenses_with_totals %}
         <h3>{{ group.date|date:"M. d, Y" }}</h3>
@@ -31,6 +33,6 @@
         <hr>
     {% endfor %}
 
-    <a href="{% url 'add_expense' %}" class="btn btn-primary">Add Expense</a>
+    
 </div>
 {% endblock %}
