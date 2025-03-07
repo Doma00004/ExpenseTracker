@@ -1,0 +1,46 @@
+/* General Table Styling */
+table {
+    width: 100%;
+    border-spacing: 0;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Buttons Styling */
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 0;
+    text-decoration: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-active {
+    background-color: #007bff;
+    font-weight: bold;
+}
+
+/* Layout Styling */
+div {
+    margin: 10px;
+}

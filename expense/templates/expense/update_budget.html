@@ -1,0 +1,37 @@
+<style>
+    .asteriskField{
+        color: red;
+    }
+</style>
+
+{% extends 'layout.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %} Update Budget {% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-success text-center">Update Budget Form</h2>
+            {% for msg in messages %}
+            
+            {% if msg.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+            <div class="alert alert-danger">
+                {{ msg }}
+            </div>
+            {% endif %}
+            {% endfor%}
+            <form action="" method="POST" class="shadow-lg p-3" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <div class="button-container">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="reset" class="btn btn-danger">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% block title %}My Expenses{% endblock %}
+
+{% block content %}
+<div class="list-container">
+    <h2 style="text-align: center;">Expenses</h2><br>
+    <a href="{% url 'add_expense' %}" class="btn btn-primary" style="float: right; margin-bottom: 10px;">Add Expense</a>
+
+
+    {% for group in expenses_with_totals %}
+        <h3>{{ group.date|date:"M. d, Y" }}</h3>
+        <table>
+            <tbody>
+                {% for expense in group.expenses %}
+                <tr>
+                    <td>{{ expense.name }}</td>
+                    <td>({{ expense.description }})</td>
+                    <td class="table-text-right">Rs. {{ expense.amount }}</td>
+                    <td>
+                        <a href="/expense/updateexpense/{{ expense.id }}" class="btn btn-primary">
+                            <i class="fas fa-pen-square"></i>
+                        </a>
+                        &nbsp;
+                        <a href="/expense/deleteexpense/{{ expense.id }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this expense?')">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <strong>Total: {{ group.total }}</strong>
+        <hr>
+    {% endfor %}
+
+    
+</div>
+{% endblock %}
