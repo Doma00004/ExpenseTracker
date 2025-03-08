@@ -20,5 +20,10 @@ urlpatterns = [
     path('addbudget/', views.add_budget, name='add_budget'),
     path('updatebudget/<int:budget_id>', views.update_budget, name='updatebudget'),
     path('deletebudget/<int:budget_id>', views.delete_budget, name='deletebudget'),
+
+    # report
     path('report/', views.report, name='report'),
+    path('report_view/', views.report_view, name='report_view'),
+    path('report/pdf/', views.export_report_pdf, name='export_report_pdf'),
+    path('report/chart-pdf/', views.export_report_chart_pdf, name='export_report_chart_pdf'),
 ]

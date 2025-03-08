@@ -405,3 +405,198 @@ def report(request):
         'selected_category': selected_category,
     })
 
+
+
+# import json
+# from collections import defaultdict
+# from django.shortcuts import render
+# from django.contrib.auth.decorators import login_required
+# from django.utils.timezone import now
+# from django.db.models import Sum
+# from .models import Expense, Budget  
+
+# @login_required
+# def report(request):
+#     categories = Expense.CATEGORY  # Fetch categories from the model
+#     selected_category = request.GET.get('category', '')
+
+#     today = now().date()
+#     start_of_month = today.replace(day=1)
+
+#     expenses = Expense.objects.filter(user=request.user, date__gte=start_of_month)
+
+#     if selected_category:
+#         expenses = expenses.filter(category=selected_category)
+
+#     # Aggregate expenses per category and convert to float
+#     category_expense_data = expenses.values('category').annotate(total=Sum('amount'))
+
+#     labels = [entry['category'] for entry in category_expense_data]
+#     data = [float(entry['total']) for entry in category_expense_data]  # Convert Decimal to float
+
+#     # Budget calculations
+#     budgets = Budget.objects.filter(user=request.user)
+#     if selected_category:
+#         budgets = budgets.filter(category=selected_category)
+
+#     total_budget = float(budgets.aggregate(Sum('amount'))['amount__sum'] or 0)
+#     total_expenses = float(expenses.aggregate(Sum('amount'))['amount__sum'] or 0)
+#     remaining_budget = total_budget - total_expenses
+
+#     return render(request, 'expense/1report.html', {
+#         'categories': categories,
+#         'selected_category': selected_category,
+#         'total_budget': total_budget,
+#         'total_expenses': total_expenses,
+#         'remaining_budget': remaining_budget,
+#         'expense_labels': json.dumps(labels),
+#         'expense_data': json.dumps(data),
+#     })
+
+
+import json
+from collections import defaultdict
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.utils.timezone import now
+from django.db.models import Sum
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from .models import Expense, Budget  
+
+@login_required
+def report_view(request):
+    categories = Expense.CATEGORY  # Fetch categories from the model
+    selected_category = request.GET.get('category', '')  # Get selected category from query params
+
+    # Get current month range
+    today = now().date()
+    start_of_month = today.replace(day=1)  # First day of the current month
+
+    # Filter expenses by user and current month
+    expenses = Expense.objects.filter(user=request.user, date__gte=start_of_month)
+    
+    if selected_category:
+        expenses = expenses.filter(category=selected_category)
+
+    # Group expenses by date
+    grouped_expenses = defaultdict(list)
+    for expense in expenses:
+        grouped_expenses[expense.date].append(expense)
+
+    # Create a list with totals
+    expenses_with_totals = [
+        {
+            "date": date,
+            "expenses": grouped_expenses[date],
+            "total": sum(exp.amount for exp in grouped_expenses[date]),
+        }
+        for date in sorted(grouped_expenses.keys(), reverse=True)
+    ]
+
+    # Aggregate expenses per category and convert to float
+    category_expense_data = expenses.values('category').annotate(total=Sum('amount'))
+    labels = [entry['category'] for entry in category_expense_data]
+    data = [float(entry['total']) for entry in category_expense_data]  # Convert Decimal to float
+
+    # Budget calculations
+    budgets = Budget.objects.filter(user=request.user)
+    if selected_category:
+        budgets = budgets.filter(category=selected_category)
+
+    total_budget = float(budgets.aggregate(Sum('amount'))['amount__sum'] or 0)
+    total_expenses = float(expenses.aggregate(Sum('amount'))['amount__sum'] or 0)
+    remaining_budget = total_budget - total_expenses
+
+    return render(request, 'expense/2report.html', {
+        'categories': categories,
+        'selected_category': selected_category,
+        'total_budget': total_budget,
+        'total_expenses': total_expenses,
+        'remaining_budget': remaining_budget,
+        'expenses_with_totals': expenses_with_totals,
+        'expense_labels': json.dumps(labels),
+        'expense_data': json.dumps(data),
+    })
+
+@login_required
+def export_report_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="expense_report.pdf"'
+    
+    p = canvas.Canvas(response)
+    p.drawString(100, 800, "Expense Report")
+    
+    today = now().date()
+    start_of_month = today.replace(day=1)
+    expenses = Expense.objects.filter(user=request.user, date__gte=start_of_month)
+    y_position = 780
+    
+    for expense in expenses:
+        p.drawString(100, y_position, f"{expense.date}: {expense.category} - {expense.amount}")
+        y_position -= 20
+        if y_position < 50:
+            p.showPage()
+            y_position = 800
+    
+    p.showPage()
+    p.save()
+    return response
+
+
+import json
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.utils.timezone import now
+from django.db.models import Sum
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+from io import BytesIO
+from .models import Expense, Budget  
+
+@login_required
+def export_report_chart_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="expense_report_chart.pdf"'
+    
+    p = canvas.Canvas(response)
+    p.drawString(100, 800, "Expense Report with Chart")
+    
+    today = now().date()
+    start_of_month = today.replace(day=1)
+    expenses = Expense.objects.filter(user=request.user, date__gte=start_of_month)
+
+    y_position = 780
+    for expense in expenses:
+        p.drawString(100, y_position, f"{expense.date}: {expense.category} - {expense.amount}")
+        y_position -= 20
+        if y_position < 350:  # Ensure enough space for the chart
+            p.showPage()
+            y_position = 800
+
+    # Generate Pie Chart
+    category_expense_data = expenses.values('category').annotate(total=Sum('amount'))
+    labels = [entry['category'] for entry in category_expense_data]
+    data = [float(entry['total']) for entry in category_expense_data]
+
+    if data:  # Only generate chart if there is data
+        fig, ax = plt.subplots(figsize=(5, 5))  # Keep the chart aspect ratio square
+        ax.pie(data, labels=labels, autopct='%1.1f%%', startangle=140)
+        plt.axis('equal')
+
+        img_buffer = BytesIO()
+        plt.savefig(img_buffer, format='png', bbox_inches='tight', dpi=100)  # Improve resolution
+        plt.close(fig)
+
+        img_buffer.seek(0)
+        img = ImageReader(img_buffer)
+
+        # Ensure aspect ratio is preserved
+        p.drawImage(img, 120, 100, width=300, height=300, preserveAspectRatio=True, mask='auto')
+
+    p.showPage()
+    p.save()
+    return response
