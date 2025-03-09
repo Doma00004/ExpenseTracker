@@ -1,0 +1,57 @@
+<style>
+    .asteriskField{
+        color: red;
+        padding-left: 5px;
+    }
+    .loginform{
+        background: linear-gradient(to top right, #107482, #4d8b7b, #2d757f, #4d8b7b, #096b78);
+    }
+    .form-label{
+        color: #ffff ;
+    }
+    .form-control{
+        background-color: #cbe1db !important;
+    }
+    .btn{
+        background-color: #003C43 !important;
+    }
+</style>
+
+{% load crispy_forms_tags %}
+
+{% block main_content %}
+<div class="d-flex justify-content-center">
+    <div class="col-md-6">
+        <h2 class="text-center text-success">Login Form</h2>
+        {% for msg in messages %}
+        {% if msg.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+        <div class="alert alert-success">
+            {{msg}}
+        </div>
+        
+        {% elif msg.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+        <div class="alert alert-danger">
+            {{ msg }}
+        </div>
+        {% endif %}
+        {% endfor%}
+        <form action="" method="post" class="shadow-lg p-3 loginform" autocomplete="off">
+            <!-- to send data in secure way -->
+            {% csrf_token %}
+            {{ form | crispy }}
+            <div class="mx-auto" style="width: 200px;">
+               <input type="submit" name="submit" value="Sign in" class="btn btn-primary border-0 rounded-pill">
+               <a href="{% url 'register' %}">Create new account</a>
+            </div>
+       </form>
+
+
+    </div>
+</div>
+<script>
+    var forms_fields = document.getElementsByTagName('input')
+    forms_fields[1].placeholder = 'Enter Username';
+    forms_fields[2].placeholder = 'Enter Password';
+</script>
+
+{% endblock %}

@@ -1,0 +1,132 @@
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(to top right, #a8e6cf, #98d9b6, #77c7a7);
+    }
+
+    .loginform-container {
+        background: white;
+        width: 400px;
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .loginform-container h2 {
+        font-size: 24px;
+        color: #087f23;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .loginform-container .form-label {
+        color: #0a6f26;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .loginform-container .form-control {
+        width: 100%;
+        background-color: #eafbee;
+        border: 1px solid #98d9b6;
+        border-radius: 10px;
+        height: 45px;
+        padding: 0 15px;
+        font-size: 16px;
+        color: #0a6f26;
+        margin-bottom: 25px;
+        transition: all 0.3s ease;
+    }
+
+    .loginform-container .form-control:focus {
+        border-color: #087f23;
+        box-shadow: 0px 0px 5px rgba(8, 127, 35, 0.5);
+        outline: none;
+    }
+
+    .loginform-container .btn {
+        background: linear-gradient(to right, #0d915b, #087f23);
+        border: none;
+        border-radius: 20px;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        width: 100%;
+        padding: 10px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .loginform-container .btn:hover {
+        background: linear-gradient(to right, #087f23, #0d915b);
+        box-shadow: 0px 4px 10px rgba(13, 145, 91, 0.5);
+    }
+
+    .loginform-container a {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        color: #087f23;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .loginform-container a:hover {
+        text-decoration: underline;
+        color: #065b18;
+    }
+
+    .alert {
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+</style>
+
+<div class="loginform-container">
+    <h2>Login Form</h2>
+    {% for msg in messages %}
+        {% if msg.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+        <div class="alert alert-success">
+            {{msg}}
+        </div>
+        
+        {% elif msg.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+        <div class="alert alert-danger">
+            {{ msg }}
+        </div>
+        {% endif %}
+        {% endfor%}
+
+    <form action="" method="post" class="loginform" autocomplete="off">
+        {% csrf_token %}
+        <label for="username" class="form-label">Username</label><br><br>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Enter Username"><br>
+        
+        <label for="password" class="form-label">Password</label><br><br>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Enter Password"><br>
+        
+        <button type="submit" class="btn">Sign in</button>
+        <br><br>
+        <a href="{% url 'forgot_password' %}">Forgot Password?</a>  <!-- Add Forgot Password Link -->
+        <br>
+        <a href="{% url 'register' %}">Create new account</a>
+    </form>
+</div>

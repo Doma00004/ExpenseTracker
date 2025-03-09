@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+{% block title %}My Expenses{% endblock %}
+
+{% block content %}
+<div class="list-container">
+  <h2 style="text-align: center;">Categories</h2><br>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category in categories %}
+        <tr>
+          <td>{{ category.name }}</td>
+          <td>
+            <a href="/expense/updatecategory/{{category.id}}" class="btn btn-primary">
+                <i class="fas fa-pen-square"></i>
+            </a>
+            &nbsp;&nbsp;
+            <a href="/expense/deletecategory/{{category.id}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this category?')">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+        </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{% url 'add_category' %}" class="btn btn-primary">Add Category</a>
+</div>
+{% endblock %}

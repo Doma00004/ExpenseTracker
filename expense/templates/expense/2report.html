@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="list-container">
+<h2 style="text-align: center;">Monthly Expense Report</h2>
+<div class="text-end">
+    <a href="{% url 'export_report_chart_pdf' %}" class="btn btn-primary">Download
+        <i class="bi bi-download"></i>
+    </a>
+</div>
+
+
+<!-- Expense Table -->
+<table border="1">
+    <tr>
+        <th>Date</th>
+        <th>Details</th>
+        <th>Total</th>
+    </tr>
+    {% for expense in expenses_with_totals %}
+    <tr>
+        <td>{{ expense.date }}</td>
+        <td>
+            <ul>
+                {% for item in expense.expenses %}
+                <li>{{ item.category }}: {{ item.amount }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+        <td>{{ expense.total }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!-- Pie Chart -->
+<div style="width: 50%; margin: auto;">
+    <canvas id="expenseChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        const expenseLabels = JSON.parse('{{ expense_labels|escapejs }}');
+        const expenseData = JSON.parse('{{ expense_data|escapejs }}');
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: expenseLabels,
+                datasets: [{
+                    label: 'Expenses',
+                    data: expenseData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                        'rgba(255, 206, 86, 0.5)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(153, 102, 255, 0.5)',
+                        'rgba(255, 159, 64, 0.5)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Expense Breakdown' }
+                }
+            }
+        });
+    });
+</script>
+</div>
+{% endblock %}
