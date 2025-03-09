@@ -544,59 +544,148 @@ def export_report_pdf(request):
     return response
 
 
-import json
+# import json
+# import matplotlib.pyplot as plt
+# from collections import defaultdict
+# from django.shortcuts import render
+# from django.contrib.auth.decorators import login_required
+# from django.utils.timezone import now
+# from django.db.models import Sum
+# from django.http import HttpResponse
+# from reportlab.pdfgen import canvas
+# from reportlab.lib.utils import ImageReader
+# from io import BytesIO
+# from .models import Expense, Budget  
+
+# @login_required
+# def export_report_chart_pdf(request):
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="expense_report_chart.pdf"'
+    
+#     p = canvas.Canvas(response)
+#     p.drawString(100, 800, "Expense Report with Chart")
+    
+#     today = now().date()
+#     start_of_month = today.replace(day=1)
+#     expenses = Expense.objects.filter(user=request.user, date__gte=start_of_month)
+
+#     y_position = 780
+#     for expense in expenses:
+#         p.drawString(100, y_position, f"{expense.date}: {expense.category} - {expense.amount}")
+#         y_position -= 20
+#         if y_position < 350:  # Ensure enough space for the chart
+#             p.showPage()
+#             y_position = 800
+
+#     # Generate Pie Chart
+#     category_expense_data = expenses.values('category').annotate(total=Sum('amount'))
+#     labels = [entry['category'] for entry in category_expense_data]
+#     data = [float(entry['total']) for entry in category_expense_data]
+
+#     if data:  # Only generate chart if there is data
+#         fig, ax = plt.subplots(figsize=(5, 5))  # Keep the chart aspect ratio square
+#         ax.pie(data, labels=labels, autopct='%1.1f%%', startangle=140)
+#         plt.axis('equal')
+
+#         img_buffer = BytesIO()
+#         plt.savefig(img_buffer, format='png', bbox_inches='tight', dpi=100)  # Improve resolution
+#         plt.close(fig)
+
+#         img_buffer.seek(0)
+#         img = ImageReader(img_buffer)
+
+#         # Ensure aspect ratio is preserved
+#         p.drawImage(img, 120, 100, width=300, height=300, preserveAspectRatio=True, mask='auto')
+
+#     p.showPage()
+#     p.save()
+#     return response
+
+
 import matplotlib.pyplot as plt
-from collections import defaultdict
-from django.shortcuts import render
+from io import BytesIO
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
 from django.db.models import Sum
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
-from reportlab.lib.utils import ImageReader
-from io import BytesIO
-from .models import Expense, Budget  
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet
+from .models import Expense
 
 @login_required
 def export_report_chart_pdf(request):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="expense_report_chart.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="monthly_expense_report.pdf"'
     
-    p = canvas.Canvas(response)
-    p.drawString(100, 800, "Expense Report with Chart")
-    
+    # Create PDF document
+    doc = SimpleDocTemplate(response, pagesize=letter)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # Title
+    elements.append(Paragraph("Monthly Expense Report", styles['Title']))
+    elements.append(Spacer(1, 12))
+
+    # Get expenses for the current month
     today = now().date()
     start_of_month = today.replace(day=1)
     expenses = Expense.objects.filter(user=request.user, date__gte=start_of_month)
 
-    y_position = 780
+    if not expenses.exists():
+        elements.append(Paragraph("No expenses recorded this month.", styles['Normal']))
+        doc.build(elements)
+        return response  # Ensure response is always returned
+
+    # Organize data for the table
+    data = [["Date", "Details", "Total"]]
+    expense_data = {}
+
     for expense in expenses:
-        p.drawString(100, y_position, f"{expense.date}: {expense.category} - {expense.amount}")
-        y_position -= 20
-        if y_position < 350:  # Ensure enough space for the chart
-            p.showPage()
-            y_position = 800
+        date_str = expense.date.strftime("%B %d, %Y")
+        if date_str not in expense_data:
+            expense_data[date_str] = []
+        expense_data[date_str].append(f"{expense.category}: {expense.amount:.2f}")
+
+    for date, details in expense_data.items():
+        total = sum(float(d.split(": ")[-1]) for d in details)
+        details_paragraph = Paragraph("<br/>".join(f"• {d}" for d in details), styles['Normal'])
+        data.append([date, details_paragraph, f"{total:.2f}"])
+
+    # Create and style the table
+    table = Table(data, colWidths=[100, 300, 100])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('VALIGN', (1, 1), (-1, -1), 'TOP'),
+    ]))
+
+    elements.append(table)
+    elements.append(Spacer(1, 24))
 
     # Generate Pie Chart
     category_expense_data = expenses.values('category').annotate(total=Sum('amount'))
     labels = [entry['category'] for entry in category_expense_data]
-    data = [float(entry['total']) for entry in category_expense_data]
+    amounts = [float(entry['total']) for entry in category_expense_data]
 
-    if data:  # Only generate chart if there is data
-        fig, ax = plt.subplots(figsize=(5, 5))  # Keep the chart aspect ratio square
-        ax.pie(data, labels=labels, autopct='%1.1f%%', startangle=140)
-        plt.axis('equal')
+    if amounts:  # Only generate chart if there is data
+        fig, ax = plt.subplots(figsize=(5, 5))
+        ax.pie(amounts, labels=labels, autopct='%1.1f%%', startangle=140, colors=['#ff9999','#66b3ff','#99ff99','#ffcc99','#c2c2f0'])
+        ax.set_aspect('equal')  # Fix stretched chart issue
+        plt.title("Expense Breakdown using Pie-Chart:", fontsize=14, fontweight='bold')  # Update title
 
         img_buffer = BytesIO()
-        plt.savefig(img_buffer, format='png', bbox_inches='tight', dpi=100)  # Improve resolution
+        plt.savefig(img_buffer, format='png', bbox_inches='tight', dpi=150)  # High resolution
         plt.close(fig)
-
         img_buffer.seek(0)
-        img = ImageReader(img_buffer)
 
-        # Ensure aspect ratio is preserved
-        p.drawImage(img, 120, 100, width=300, height=300, preserveAspectRatio=True, mask='auto')
+        # Insert Pie Chart
+        img = Image(img_buffer, width=300, height=300)
+        elements.append(Spacer(1, 24))
+        elements.append(img)
 
-    p.showPage()
-    p.save()
+    doc.build(elements)
     return response
